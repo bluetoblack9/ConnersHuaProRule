@@ -1,0 +1,37 @@
+name: Sync RuleGo Surge
+
+on:
+  schedule:
+    # 下面两个 cron 是按 UTC 写的，对应北京时间 09:00 和 21:00
+    - cron: '0 1 * * *'   # 01:00 UTC = 09:00 CST
+    - cron: '0 13 * * *'  # 13:00 UTC = 21:00 CST
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Export Surge folder from ConnersHua/RuleGo via SVN
+        run: |
+          rm -rf tmp_surge || true
+          svn export https://github.com/ConnersHua/RuleGo/trunk/Surge tmp_surge
+          ls -la tmp_surge
+
+      - name: Replace local Surge folder
+        run: |
+          rm -rf Surge || true
+          mv tmp_surge Surge
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Surge
+          git commit -m "Auto sync Surge from ConnersHua/RuleGo" || echo "No changes to commit"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
