@@ -28,6 +28,7 @@ DOMAIN,o33249.ingest.sentry.io
 DOMAIN,openaiapi-site.azureedge.net
 DOMAIN-KEYWORD,openaiapi
 DOMAIN-KEYWORD,openaicom
+DOMAIN-SUFFIX,oaistatsig.com
 
 # Cloudflare
 # > AI Gateway
